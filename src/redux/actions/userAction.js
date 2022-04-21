@@ -127,17 +127,11 @@ export const editProfilePhoto = (formData) => {
       dispatch({ type: "LOADING" });
       let token = Cookies.get("token");
 
-      let res2 = await axios.patch(
-        `${API_URL}/image/updateimage`,
-        {
-          profilepicture,
+      let res2 = await axios.post(`${API_URL}/images/updateimage`, formData, {
+        headers: {
+          authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      });
 
       dispatch({ type: "LOGIN", payload: res2.data });
 

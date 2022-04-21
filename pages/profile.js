@@ -35,7 +35,7 @@ import useUser from "../src/hooks/useUser";
 
 const Profile = ({ editProfile, editProfilePhoto }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { bio, username, fullname } = useUser();
+  const { bio, username, fullname, profilepicture } = useUser();
   // input data user
   const [input, setinput] = useState({
     fullname: "",
@@ -66,9 +66,8 @@ const Profile = ({ editProfile, editProfilePhoto }) => {
   const onSaveHandle = async (e) => {
     e.preventDefault();
     try {
-      let token = Cookies.get("token");
-      const formData = new formData();
-      formData.append("profilepicture", selectedImage);
+      const formData = new FormData();
+      formData.append("profilepicture", selectedImage.file);
       editProfilePhoto(formData);
       onClose();
     } catch (error) {
@@ -103,8 +102,8 @@ const Profile = ({ editProfile, editProfilePhoto }) => {
       <div className="relative mx-[300px] ">
         <div className="flex gap-4 absolute -top-11 w-full  ">
           <div className="w-1/4 pl-2">
-            <Image
-              src={Fotoprofile}
+            <img //http:localhost:5000/images/PP71723781237.jpg
+              src={`${API_URL}${profilepicture}`}
               alt="Arief Tanjung"
               width={150}
               height={150}
@@ -197,56 +196,61 @@ const Profile = ({ editProfile, editProfilePhoto }) => {
                       Edit Profil
                     </ModalHeader>
                     <ModalCloseButton />
-                    <form onSubmit={inputHandle}>
-                      <ModalBody>
-                        <div>
-                          <div className="flex-col">
-                            <div className="flex justify-between">
-                              <div className="font-bold text-xl">
-                                Foto Profile
-                              </div>
-                              <button className="text-blue-600 text-xl hover:underline">
-                                Edit
-                              </button>
-                            </div>
-                            <div className="pt-3 text-center">
-                              <Image
-                                src={Fotoprofile}
-                                alt="Arief Tanjung"
-                                width={150}
-                                height={150}
-                                layout="fixed"
-                                className="rounded-full cursor-pointer"
-                              />
+                    <ModalBody>
+                      <div>
+                        <div className="flex-col">
+                          <div className="flex justify-between">
+                            <div className="font-bold text-xl text-ellipsis">
+                              Foto Profil
                             </div>
                           </div>
-                          <div className="flex-col">
-                            <div className="flex justify-between">
-                              <div className="font-bold text-xl">
-                                Foto Sampul
-                              </div>
-                              <button className="text-blue-600 text-xl hover:underline">
-                                Edit
-                              </button>
-                            </div>
-                            <div className="pt-3 text-center">
-                              <Image
-                                objectPosition="center"
-                                objectFit="cover"
-                                src={Bg}
-                                className="rounded-xl"
-                              />
-                            </div>
+                          <div className="pt-3 text-center">
+                            <Image
+                              src={Fotoprofile}
+                              alt="Arief Tanjung"
+                              width={150}
+                              height={150}
+                              layout="fixed"
+                              className="rounded-full cursor-pointer"
+                            />
                           </div>
+                          <div>
+                            <input
+                              type="file"
+                              className="pr-16"
+                              onChange={onFileChange}
+                              id="profilepicture"
+                              name="profilepicture" // image masih error
+                              accept=".jpg,.jpeg,.png"
+                            />
+                            <button
+                              className="text-blue-600 text-xl hover:underline"
+                              onClick={onSaveHandle}
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex-col">
+                          <div className="flex justify-between">
+                            <div className="font-bold text-xl">Foto Sampul</div>
+                            <button className="text-blue-600 text-xl hover:underline">
+                              Edit
+                            </button>
+                          </div>
+                          <div className="pt-3 text-center">
+                            <Image
+                              objectPosition="center"
+                              objectFit="cover"
+                              src={Bg}
+                              className="rounded-xl"
+                            />
+                          </div>
+                        </div>
+                        <form onSubmit={inputHandle}>
                           <div className="flex-col">
                             <div className="flex justify-between">
                               <div className="font-bold text-xl">Bio</div>
-                              <button
-                                type="submit"
-                                className="text-blue-600 text-xl hover:underline"
-                              >
-                                Submit
-                              </button>
                             </div>
                             <div className="pt-3 text-center">
                               <textarea
@@ -261,9 +265,6 @@ const Profile = ({ editProfile, editProfilePhoto }) => {
                           <div className="flex-col">
                             <div className="flex justify-between">
                               <div className="font-bold text-xl">Fullname</div>
-                              <button className="text-blue-600 text-xl hover:underline">
-                                Submit
-                              </button>
                             </div>
                             <div className="pt-3 text-center">
                               <textarea
@@ -278,9 +279,6 @@ const Profile = ({ editProfile, editProfilePhoto }) => {
                           <div className="flex-col">
                             <div className="flex justify-between">
                               <div className="font-bold text-xl">Username</div>
-                              <button className="text-blue-600 text-xl hover:underline">
-                                Submit
-                              </button>
                             </div>
                             <div className="pt-3 text-center">
                               <textarea
@@ -291,10 +289,14 @@ const Profile = ({ editProfile, editProfilePhoto }) => {
                                 type="text"
                               ></textarea>
                             </div>
+                            <button className="text-blue-600 text-xl pl-80 hover:underline">
+                              Submit
+                            </button>
                           </div>
-                        </div>
-                      </ModalBody>
-                    </form>
+                        </form>
+                      </div>
+                    </ModalBody>
+
                     <ModalFooter></ModalFooter>
                   </ModalContent>
                 </Modal>
@@ -398,4 +400,4 @@ const Profile = ({ editProfile, editProfilePhoto }) => {
   );
 };
 
-export default connect(null, { editProfile })(Profile);
+export default connect(null, { editProfile, editProfilePhoto })(Profile);

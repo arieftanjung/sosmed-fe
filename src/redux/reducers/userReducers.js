@@ -7,7 +7,7 @@ const INITIAL_STATE = {
   email: "",
   fullname: "",
   bio: "",
-  profile_picture: "",
+  profilepicture: "",
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
