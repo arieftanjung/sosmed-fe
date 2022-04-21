@@ -13,7 +13,12 @@ import { MdOutlineAddAPhoto } from "react-icons/md";
 import { BsChatDots } from "react-icons/bs";
 import { BsTrash } from "react-icons/bs";
 import { RiSendPlaneFill } from "react-icons/ri";
-import Header from "./../components/Header";
+import { Header } from "./../components/Header";
+import Link from "next/link";
+import { useState } from "react";
+import Cookies from "js-cookie";
+import { API_URL } from "../src/helpers";
+import { connect } from "react-redux";
 import {
   Modal,
   ModalOverlay,
@@ -24,12 +29,65 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
+import axios from "axios";
+import { editProfile, editProfilePhoto } from "../src/redux/actions/userAction";
+import useUser from "../src/hooks/useUser";
 
-const Profile = () => {
+const Profile = ({ editProfile, editProfilePhoto }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { bio, username, fullname } = useUser();
+  // input data user
+  const [input, setinput] = useState({
+    fullname: "",
+    username: "",
+    bio: "",
+  });
 
+  const handleInput = (e) => {
+    setinput({ ...input, [e.target.name]: e.target.value });
+  };
+
+  const [selectedImage, setselectedImage] = useState({
+    file: [],
+    filePreview: null,
+  });
+
+  const onFileChange = (e) => {
+    console.log(e.target.files[0]);
+    if (e.target && e.target.files[0]) {
+      setselectedImage({
+        ...selectedImage,
+        file: e.target.files[0],
+        filePreview: URL.createObjectURL(e.target.files[0]),
+      });
+    }
+  };
+
+  const onSaveHandle = async (e) => {
+    e.preventDefault();
+    try {
+      let token = Cookies.get("token");
+      const formData = new formData();
+      formData.append("profilepicture", selectedImage);
+      editProfilePhoto(formData);
+      onClose();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const inputHandle = async (e) => {
+    e.preventDefault();
+    try {
+      let token = Cookies.get("token");
+      editProfile(input);
+      onClose();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
-    <div className="bg-Seafoam  min-h-screen">
+    <div className="bg-Seafoam flex-col min-h-screen">
       <div>
         <Header />
       </div>
@@ -55,7 +113,10 @@ const Profile = () => {
           </div>
           <div className="pt-12 items-start w-2/4 ">
             <p className="whitespace-nowrap font-semibold text-xl">
-              Arief Tanjung
+              {fullname}
+            </p>
+            <p className="whitespace-nowrap font-semibold text-xl">
+              @{username}
             </p>
             <p className="text-gray-400 font-normal">4 teman</p>
             <Wrap className="pt-2">
@@ -136,62 +197,104 @@ const Profile = () => {
                       Edit Profil
                     </ModalHeader>
                     <ModalCloseButton />
-                    <ModalBody>
-                      <div>
-                        <div className="flex-col">
-                          <div className="flex justify-between">
-                            <div className="font-bold text-xl">
-                              Foto Profile
+                    <form onSubmit={inputHandle}>
+                      <ModalBody>
+                        <div>
+                          <div className="flex-col">
+                            <div className="flex justify-between">
+                              <div className="font-bold text-xl">
+                                Foto Profile
+                              </div>
+                              <button className="text-blue-600 text-xl hover:underline">
+                                Edit
+                              </button>
                             </div>
-                            <button className="text-blue-600 text-xl hover:underline">
-                              Edit
-                            </button>
+                            <div className="pt-3 text-center">
+                              <Image
+                                src={Fotoprofile}
+                                alt="Arief Tanjung"
+                                width={150}
+                                height={150}
+                                layout="fixed"
+                                className="rounded-full cursor-pointer"
+                              />
+                            </div>
                           </div>
-                          <div className="pt-3 text-center">
-                            <Image
-                              src={Fotoprofile}
-                              alt="Arief Tanjung"
-                              width={150}
-                              height={150}
-                              layout="fixed"
-                              className="rounded-full cursor-pointer"
-                            />
+                          <div className="flex-col">
+                            <div className="flex justify-between">
+                              <div className="font-bold text-xl">
+                                Foto Sampul
+                              </div>
+                              <button className="text-blue-600 text-xl hover:underline">
+                                Edit
+                              </button>
+                            </div>
+                            <div className="pt-3 text-center">
+                              <Image
+                                objectPosition="center"
+                                objectFit="cover"
+                                src={Bg}
+                                className="rounded-xl"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex-col">
+                            <div className="flex justify-between">
+                              <div className="font-bold text-xl">Bio</div>
+                              <button
+                                type="submit"
+                                className="text-blue-600 text-xl hover:underline"
+                              >
+                                Submit
+                              </button>
+                            </div>
+                            <div className="pt-3 text-center">
+                              <textarea
+                                onChange={handleInput}
+                                name="bio"
+                                className="border-4 w-96 mx-2 h-20 rounded-md bg-inherit  focus:outline-none resize-none"
+                                placeholder="Bio"
+                                type="text"
+                              ></textarea>
+                            </div>
+                          </div>
+                          <div className="flex-col">
+                            <div className="flex justify-between">
+                              <div className="font-bold text-xl">Fullname</div>
+                              <button className="text-blue-600 text-xl hover:underline">
+                                Submit
+                              </button>
+                            </div>
+                            <div className="pt-3 text-center">
+                              <textarea
+                                onChange={handleInput}
+                                name="fullname"
+                                className="border-4 w-96 mx-2 h-20 rounded-md bg-inherit  focus:outline-none resize-none"
+                                placeholder="fullname"
+                                type="text"
+                              ></textarea>
+                            </div>
+                          </div>
+                          <div className="flex-col">
+                            <div className="flex justify-between">
+                              <div className="font-bold text-xl">Username</div>
+                              <button className="text-blue-600 text-xl hover:underline">
+                                Submit
+                              </button>
+                            </div>
+                            <div className="pt-3 text-center">
+                              <textarea
+                                onChange={handleInput}
+                                name="username"
+                                className="border-4 w-96 mx-2 h-20 rounded-md bg-inherit  focus:outline-none resize-none"
+                                placeholder="username"
+                                type="text"
+                              ></textarea>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex-col">
-                          <div className="flex justify-between">
-                            <div className="font-bold text-xl">Foto Sampul</div>
-                            <button className="text-blue-600 text-xl hover:underline">
-                              Edit
-                            </button>
-                          </div>
-                          <div className="pt-3 text-center">
-                            <Image
-                              objectPosition="center"
-                              objectFit="cover"
-                              src={Bg}
-                              className="rounded-xl"
-                            />
-                          </div>
-                        </div>
-                        <div className="flex-col">
-                          <div className="flex justify-between">
-                            <div className="font-bold text-xl">Bio</div>
-                            <button className="text-blue-600 text-xl hover:underline">
-                              Submit
-                            </button>
-                          </div>
-                          <div className="pt-3 text-center">
-                            <textarea
-                              name="bio"
-                              className="border-4 w-96 mx-2 h-20 rounded-md bg-inherit  focus:outline-none resize-none"
-                              placeholder="Bio"
-                              type="text"
-                            ></textarea>
-                          </div>
-                        </div>
-                      </div>
-                    </ModalBody>
+                      </ModalBody>
+                    </form>
                     <ModalFooter></ModalFooter>
                   </ModalContent>
                 </Modal>
@@ -199,8 +302,12 @@ const Profile = () => {
             </div>
           </div>
         </div>
+        <div className="text-black pt-40 py-1 pl-2 flex-col">
+          <p>Bio :</p>
+          <h1>{bio}</h1>
+        </div>
       </div>
-      <div className="border-t-2 mt-32 gap-2 flex mx-[300px]">
+      <div className=" pt-3 mt-3 gap-2 flex mx-[300px]">
         <div className="pt-3 w-1/2">
           <div className="item-center flex flex-col pr-4 pl-4">
             <div className="flex justify-between">
@@ -291,4 +398,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default connect(null, { editProfile })(Profile);

@@ -1,11 +1,20 @@
 import Image from "next/image";
 import Fotoprofile from "./../assets/fotoprofile.jpeg";
 import { SidebarRow } from "./SidebarRow";
-import { UserGroupIcon } from "@heroicons/react/outline";
+import {
+  ChevronDownIcon,
+  ShoopingBagIcon,
+  UserGroupIcon,
+} from "@heroicons/react/outline";
 
-import { UsersIcon } from "@heroicons/react/solid";
+import {
+  CalendarIcon,
+  ClockIcon,
+  DekstopComputerIcon,
+  UsersIcon,
+} from "@heroicons/react/solid";
 
-const Sidebar = () => {
+export const Sidebar = () => {
   return (
     <div className="flex-col items-center py-3 pr-2  ">
       <div className="flex items-center gap-3 pl-3 pt-10">
@@ -26,5 +35,3 @@ const Sidebar = () => {
     </div>
   );
 };
-
-export default Sidebar;

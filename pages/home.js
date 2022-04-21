@@ -1,10 +1,10 @@
-import Header from "./../components/Header";
-import Sidebar from "./../components/Sidebar";
+import { Header } from "./../components/Header";
+import { Sidebar } from "./../components/Sidebar";
 import { Feed } from "./../components/Feed";
 
 const Home = () => {
   return (
-    <div className="flex flex-col">
+    <div className="flex bg-Seafoam min-h-screen flex-col">
       <div>
         <Header />
       </div>

@@ -5,13 +5,17 @@ import { store } from "../src/redux/reducers";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+import AuthProvider from "../components/authProvider";
 
 function MyApp({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <ChakraProvider>
-        <Component {...pageProps} />
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
       </ChakraProvider>
+      <ToastContainer />
     </Provider>
   );
 }

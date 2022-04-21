@@ -7,3 +7,9 @@
     @apply p-2 h-10 w-10 bg-gray-200 rounded-full text-gray-700 cursor-pointer hover:bg-gray-300;
   }
 }
+
+.btn-5:hover {
+  background: #ff96ad;
+  box-shadow: 0 0 5px #ff96ad, 0 0 25px #ff96ad, 0 0 50px #ff96ad,
+    0 0 200px #ff96ad;
+}

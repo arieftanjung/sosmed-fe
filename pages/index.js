@@ -1,9 +1,9 @@
-import Login from "./login";
+import { Landingpage } from "../components/landingpage";
 
 export default function Homeutama() {
   return (
     <div>
-      <Login />
+      <Landingpage />
     </div>
   );
 }
